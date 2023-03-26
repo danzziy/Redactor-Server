@@ -1,0 +1,14 @@
+certifi==2022.12.7
+charset-normalizer==2.1.1
+colorclass==2.2.2
+docopt==0.6.2
+idna==3.4
+packaging==23.0
+pydub==0.25.1
+requests==2.28.1
+terminaltables==3.1.10
+urllib3==1.26.14
+yarg==0.1.9
+moviepy==1.0.3
+# ffmpeg.exe and ffprobe.exe must be available in path to parse mp3 files.
+# https://www.gyan.dev/ffmpeg/builds/
