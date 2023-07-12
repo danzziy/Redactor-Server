@@ -19,11 +19,11 @@ def censorAudioFile():
     else:
         audio_file = input_file
 
-    # transcriber = Transcriber()
-    # json_transcript = transcriber.transcribe_audio_file(audio_file)
-    file_to_open = Path('redactor/test_data/bitches.json')
-    jsonF=open(file_to_open)
-    json_transcript = json.load(jsonF)
+    transcriber = Transcriber()
+    json_transcript = transcriber.transcribe_audio_file(audio_file)
+    # file_to_open = Path('redactor/test_data/bitches.json')
+    # jsonF=open(file_to_open)
+    # json_transcript = json.load(jsonF)
     
     FileEditor().censor_file(audio_file, json_transcript)
 
