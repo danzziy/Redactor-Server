@@ -8,6 +8,7 @@ import os
 # TODO - Get swear words from a database down the line
 # TODO - Allow "." to be in the file name
 # TODO - Remove all of the subfolders
+# TODO - Fix garbage is video_file logic by using mimetypes instead
 def censorAudioFile():
     argument_parser = ArgumentParser()
     input_file = argument_parser.get_file()
@@ -19,11 +20,11 @@ def censorAudioFile():
     else:
         audio_file = input_file
 
-    # transcriber = Transcriber()
-    # json_transcript = transcriber.transcribe_audio_file(audio_file)
-    file_to_open = Path('redactor/test_data/bitches.json')
-    jsonF=open(file_to_open)
-    json_transcript = json.load(jsonF)
+    transcriber = Transcriber()
+    json_transcript = transcriber.transcribe_audio_file(audio_file)
+    # file_to_open = Path('redactor/test_data/bitches.json')
+    # jsonF=open(file_to_open)
+    # json_transcript = json.load(jsonF)
     
     FileEditor().censor_file(audio_file, json_transcript)
 

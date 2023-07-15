@@ -32,16 +32,18 @@ class FileEditor:
         move(output_file_name, video_file)
 
     def censor_file(self, file_path, json_transcript):
-        for word_info in json_transcript["words"]:
-            word = re.sub(r'[^a-zA-Z ]+', '', word_info['text'].lower())
-            for swear in SWEAR_WORDS:
-                if swear in word:
-                    censor_word(file_path, word_info)
+        for segments in json_transcript["segments"]:
+            for word_info in segments["words"]:
+                word = re.sub(r'[^a-zA-Z ]+', '', word_info['text'].lower())
+                print(word_info)
+                for swear in SWEAR_WORDS:
+                    if swear in word:
+                        censor_word(file_path, word_info)
 
 def censor_word(file_path, word_info):
     file_extension = file_path.split(".")[-1]
-    swear_word_start_time = word_info['start']
-    swear_word_end_time = word_info['end']
+    swear_word_start_time = word_info['start']*1000
+    swear_word_end_time = word_info['end']*1000
 
     full_audio = read_audio_file(file_path, file_extension)
     audio_before_swear = full_audio[0:swear_word_start_time]
