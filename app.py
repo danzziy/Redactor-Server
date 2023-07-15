@@ -8,6 +8,7 @@ import os
 # TODO - Get swear words from a database down the line
 # TODO - Allow "." to be in the file name
 # TODO - Remove all of the subfolders
+# TODO - Fix garbage is video_file logic by using mimetypes instead
 def censorAudioFile():
     argument_parser = ArgumentParser()
     input_file = argument_parser.get_file()

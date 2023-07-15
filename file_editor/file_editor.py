@@ -39,11 +39,6 @@ class FileEditor:
                 for swear in SWEAR_WORDS:
                     if swear in word:
                         censor_word(file_path, word_info)
-        # for word_info in json_transcript["words"]:
-        #     word = re.sub(r'[^a-zA-Z ]+', '', word_info['text'].lower())
-        #     for swear in SWEAR_WORDS:
-        #         if swear in word:
-        #             censor_word(file_path, word_info)
 
 def censor_word(file_path, word_info):
     file_extension = file_path.split(".")[-1]
