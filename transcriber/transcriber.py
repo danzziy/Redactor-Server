@@ -1,4 +1,3 @@
-import api_caller.assemblyAI as assemblyAI
 import whisper_timestamped as whisper
 import json
 import time
