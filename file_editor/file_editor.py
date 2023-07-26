@@ -7,6 +7,8 @@ import subprocess
 from shutil import move
 
 SWEAR_WORDS = ["fuck","shit","bitch","dick","nigga","nigger","asshole","whore","pussy"]
+# TODO: Break up the file editor into FileSanitizer and Redactor.
+# TODO: Make a list of swear words as a csv file.
 
 class FileEditor:
     def convert_audio_file_into_wav(self, audio_file): 
@@ -14,7 +16,6 @@ class FileEditor:
         os.remove(audio_file)
         audio.export(audio_file, format="wav")
         # return new_file_path_name
-
 
     def convert_audio_file_into_format(self, audio_file, format): 
         audio = AudioSegment.from_file(audio_file)
@@ -114,6 +115,3 @@ def read_audio_file(file_name, extension):
             sys.exit("Could not get the audio file: " + file_name)
 
     return audio
-
-# TODO - Handle cases where file has special characters in name or multiple '.'
-# TODO - Extract this out to a helper function

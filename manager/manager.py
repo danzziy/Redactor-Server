@@ -32,7 +32,6 @@ class Manager:
 
 def censor_audio_file(audio_file, mime_type):
     original_format = FileEditor().get_audio_format(audio_file)
-    print("Original format" + original_format)
     transcriber = Transcriber()
     json_transcript = transcriber.transcribe_audio_file(audio_file)
     

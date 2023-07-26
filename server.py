@@ -8,30 +8,31 @@ import magic
 app = FastAPI()
 
 # Configure CORS settings
-# origins = [
+# allowed_origins = [
 #     "http://audiocensor.com",  # Replace with your website's domain
 #     "https://audiocensor.com",  # If your website uses HTTPS
 #     "http://localhost:8080",
+#     "http://127.0.0.1:58361"
 # ]
-allowed_origins=[]
-# Add CORS middleware to the app
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-)
 
-# Middleware to block origins
-@app.middleware("http")
-async def check_cors_origin(request: Request, call_next):
-    origin = request.headers.get("origin")
-    if origin not in allowed_origins:
-        return Response("Not allowed", status_code=403)
-    response = await call_next(request)
-    response.headers["access-control-allow-origin"] = origin
-    return response
+# # Add CORS middleware to the app
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=allowed_origins,
+#     allow_credentials=True,
+#     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+#     allow_headers=["*"],
+# )
+
+# # Middleware to block origins
+# @app.middleware("http")
+# async def check_cors_origin(request: Request, call_next):
+#     origin = request.headers.get("origin")
+#     if origin not in allowed_origins:
+#         return Response("Not allowed", status_code=403)
+#     response = await call_next(request)
+#     response.headers["access-control-allow-origin"] = origin
+#     return response
 
 @app.post("/censor/{userID}")
 async def root(userID: str, file: UploadFile = File(...)):
@@ -40,11 +41,11 @@ async def root(userID: str, file: UploadFile = File(...)):
     os.makedirs(f"censoredFiles/{userID}", exist_ok=True)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    print("Fake mimetype/extension: " + file.content_type) 
+
     # Validate file type.
     mime = magic.Magic(mime=True)
     mime_type = mime.from_file(file_path)
-    print("Real Mimetype: " + mime_type)
+
     if("audio" not in mime_type and "video" not in mime_type):
         shutil.rmtree(f"censoredFiles/{userID}")
         return Response(content="Invalid File Format, the file must be either an audio or video file", status_code=400, media_type="text/plain")
