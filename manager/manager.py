@@ -6,7 +6,6 @@ from pathlib import Path
 import shutil
 import os
 
-import magic
 
 # TODO - Get swear words from a database down the line
 # TODO - Allow "." to be in the file name
@@ -14,13 +13,24 @@ import magic
 
 class Manager:
 
+    def transcribe_file(input_file, mime_type):
+        try:
+            json_transcript = transcribe_file(input_file)
+            return json_transcript["text"]
+        finally:
+            # Remove the directory containing the file, whether the censoring and uploading passed or failed
+            directory_path = os.path.dirname(input_file)
+            shutil.rmtree(directory_path)
+
     def censor_file(input_file, mime_type):
         try:
             is_video_file = "video" in mime_type
             if is_video_file:
-                censor_video_file(input_file, mime_type)
+                censor_video_file(input_file)
+            elif "audio" in mime_type:
+                censor_audio_file(input_file)
             else:
-                censor_audio_file(input_file, mime_type)
+                raise TypeError("Invalid File Format, the file must be either an audio or video file")
 
             # Upload the file to GCStorage
             GCStorage().upload_file(input_file, input_file.replace("\\", "/"))
@@ -29,8 +39,11 @@ class Manager:
             directory_path = os.path.dirname(input_file)
             shutil.rmtree(directory_path)
        
+def transcribe_file(file):
+    transcriber = Transcriber()
+    return transcriber.transcribe_audio_file(file)
 
-def censor_audio_file(audio_file, mime_type):
+def censor_audio_file(audio_file):
     original_format = FileEditor().get_audio_format(audio_file)
     transcriber = Transcriber()
     json_transcript = transcriber.transcribe_audio_file(audio_file)
@@ -42,9 +55,9 @@ def censor_audio_file(audio_file, mime_type):
     else:
         FileEditor().censor_file(audio_file, json_transcript)
 
-def censor_video_file(video_file, mime_type):
+def censor_video_file(video_file):
     audio_file = FileEditor().seperate_audio_from_video(video_file)
-    censor_audio_file(audio_file, mime_type)
+    censor_audio_file(audio_file)
     FileEditor().replace_audio_of_video(audio_file, video_file)
 
 

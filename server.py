@@ -1,5 +1,6 @@
 import shutil
 from fastapi import FastAPI, UploadFile, File, Response, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from manager.manager import Manager
 import os
@@ -8,12 +9,9 @@ import magic
 app = FastAPI()
 
 # Configure CORS settings
-# allowed_origins = [
-#     "http://audiocensor.com",  # Replace with your website's domain
-#     "https://audiocensor.com",  # If your website uses HTTPS
-#     "http://localhost:8080",
-#     "http://127.0.0.1:58361"
-# ]
+allowed_origins = [
+    "https://audiocensor.com"  # If your website uses HTTPS
+]
 
 # # Add CORS middleware to the app
 # app.add_middleware(
@@ -56,3 +54,28 @@ async def root(userID: str, file: UploadFile = File(...)):
         return Response(content=f"{error}", status_code=400, media_type="text/plain")
     
     return Response(status_code=200)
+
+
+@app.post("/transcirbe/{userID}")
+async def root(userID: str, file: UploadFile = File(...)):
+    # Download file locally.
+    file_path = os.path.join(f"transcribedFiles/{userID}/{file.filename}")
+    os.makedirs(f"transcribedFiles/{userID}", exist_ok=True)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Validate file type.
+    mime = magic.Magic(mime=True)
+    mime_type = mime.from_file(file_path)
+
+    if("audio" not in mime_type and "video" not in mime_type):
+        shutil.rmtree(f"transcribedFiles/{userID}")
+        return Response(content="Invalid File Format, the file must be either an audio or video file", status_code=400, media_type="text/plain")
+
+    transcript = ""
+    try:
+        transcript = Manager.transcribe_file(file_path)
+    except Exception as error: 
+        return Response(content=f"{error}", status_code=400, media_type="text/plain")
+    
+    return Response(content=transcript, status_code=200, media_type="text/plain")
