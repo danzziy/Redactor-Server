@@ -70,6 +70,27 @@ class FileEditor:
                     if swear in word:
                         censor_word(file_path, word_info)
 
+    def caption_video(video_file, subtitle_file):
+        directory_path = os.path.dirname(video_file)
+        file_name_with_extension = os.path.basename(video_file)
+        file_name, file_extension = os.path.splitext(file_name_with_extension)
+        output_video = os.path.join(directory_path, f'{file_name}_with_captions{file_extension}')
+        # Use subprocess to run the ffmpeg command
+        command = [
+            'ffmpeg', '-y',
+            '-i', video_file,               # Input video file
+            '-vf', f'subtitles={subtitle_file}',  # Add subtitles filter
+            '-c:a', 'copy',                  # Copy audio codec
+            output_video                     # Output video file
+        ]
+
+        # Run the ffmpeg command
+        subprocess.run(command, check=True)
+
+        os.remove(video_file)
+        os.rename(output_video, video_file)
+
+
 def get_output_format_from_codec(audioCodec):
     if "pcm" in audioCodec:
         return "wav"
