@@ -108,6 +108,7 @@ dist
 *.wav
 *.m4a
 *.wav
+*.ogg
 
 # Video file
 *.mp4
@@ -118,9 +119,8 @@ dist
 # pycache folder
 **/__pycache__/**
 
-
-
 audio-censor-test-46a73980f2c8.json
 
 *.exe
 !.gitignore
+**/censoredFiles/**
